@@ -7,14 +7,22 @@
 
 #include <avr/io.h>
 #include "NotificationDiode.h"
-
+#include "Timer1.h"
 
 int main(void)
 {
 	DiodeInit();
-	DiodeOn();
+	
+	Timer1Init();
+	TimerStart();
 	
 	while(1) {
+		if((GetTimeSinceStartInTimeframes() % (TimeframesPerSecond * 2)) < TimeframesPerSecond) {
+			DiodeOn();
+		}
+		else  {
+			DiodeOff();
+		}
 		
 	}
 	
