@@ -2,7 +2,7 @@
  * Keyboard.c
  *
  * Created: 13.01.2019 22:16:14
- *  Author: pawel
+ *  Author: Pawe³ Jur
  */ 
 #include "Keyboard.h"
 
