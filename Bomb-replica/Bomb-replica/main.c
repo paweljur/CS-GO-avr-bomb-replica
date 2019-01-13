@@ -6,10 +6,18 @@
  */ 
 
 #include <avr/io.h>
+#include "NotificationDiode.h"
 
 
 int main(void)
 {
-
+	DiodeInit();
+	DiodeOn();
+	
+	while(1) {
+		
+	}
+	
+	return 0;
 }
 
