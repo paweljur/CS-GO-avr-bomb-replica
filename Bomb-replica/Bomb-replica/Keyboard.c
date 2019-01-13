@@ -115,9 +115,9 @@ char CheckThirdColumn() {
 
 char GetKeyPressed() {
 	char letter = CheckFirstColumn();
-	if(letter == ' '){
+	if(letter == NullKey){
 		letter = CheckSecondColumn();
-		if(letter == ' '){
+		if(letter == NullKey){
 			letter = CheckThirdColumn();
 		}
 	}
