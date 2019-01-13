@@ -8,28 +8,20 @@
 #include <avr/io.h>
 #include "NotificationDiode.h"
 #include "Timer1.h"
+#include "Keyboard.h"
 
 int main(void)
 {
 	DiodeInit();
-	Timer1Init();
-	SpeakerInit();
-	
-	TimerStart();
+	KeyboardInit();
 	
 	while(1) {
-		if(GetSignalTimeInTimeframes() < TimeframesPerSecond) {
+		if(GetKeyPressed() != NullKey){
 			DiodeOn();
-			SpeakerOn();
-		}
-		else if (GetSignalTimeInTimeframes() < (TimeframesPerSecond * 2))  {
-			DiodeOff();
-			SpeakerOff();
 		}
 		else {
-			ResetSignalTime();
+			DiodeOff();
 		}
-		
 	}
 	
 	return 0;
