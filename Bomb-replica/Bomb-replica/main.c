@@ -12,16 +12,22 @@
 int main(void)
 {
 	DiodeInit();
-	
 	Timer1Init();
+	SpeakerInit();
+	
 	TimerStart();
 	
 	while(1) {
-		if((GetTimeSinceStartInTimeframes() % (TimeframesPerSecond * 2)) < TimeframesPerSecond) {
+		if(GetSignalTimeInTimeframes() < TimeframesPerSecond) {
 			DiodeOn();
+			SpeakerOn();
 		}
-		else  {
+		else if (GetSignalTimeInTimeframes() < (TimeframesPerSecond * 2))  {
 			DiodeOff();
+			SpeakerOff();
+		}
+		else {
+			ResetSignalTime();
 		}
 		
 	}

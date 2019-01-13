@@ -19,7 +19,12 @@ void Timer1Init();
 void TimerStart();
 void TimerReset();
 void TimerStop();
-double GetTimeSinceStartInSec();
-int GetTimeSinceStartInTimeframes();
+
+void SpeakerInit();
+void SpeakerOn();
+void SpeakerOff();
+
+int GetSignalTimeInTimeframes();
+void ResetSignalTime();
 
 #endif /* TIMER1_H_ */
