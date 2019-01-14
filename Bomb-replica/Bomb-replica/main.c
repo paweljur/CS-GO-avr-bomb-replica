@@ -7,32 +7,91 @@
 
 #include <avr/io.h>
 #include <stdlib.h>
-#include "NotificationDiode.h"
+#include <util/delay.h>
+#include <string.h>
+
 #include "Timer1.h"
 #include "Keyboard.h"
 #include "HD44780.h"
+#include "NotificationDiode.h"
+
+void InitialBeep() {
+	SpeakerOn();
+	_delay_ms(100);
+	SpeakerOff();
+	_delay_ms(75);
+	SpeakerOn();
+	_delay_ms(100);
+	SpeakerOff();
+}
+
+void WriteCode(char code[7]) {
+	for(int i = 0; i < 7; i++) {
+		LCD_WriteData(code[i]);
+	}
+	LCD_Home();
+}
+
+void AddDigit(char *code, char digit, int size) {
+	char tmp[7];
+	strncpy(tmp, code, size);
+	for(int i = 1 ; i < size; i++) {
+		code[i - 1] = tmp[i];
+	}
+	code[size - 1] = digit;
+}
+
+void GetCode(char *code, const int size) {
+	char pressed = NullKey;
+	
+	WriteCode(code);
+	
+	for(int i = 0; i < size; i++) {
+
+		while(pressed == NullKey || pressed == KeyAsterisk || pressed == KeyHash) {
+			pressed = GetKeyPressed();
+		}
+		
+		DiodeOn();
+		
+		AddDigit(code, pressed, size);
+		
+		WriteCode(code);
+		
+		while(pressed != NullKey) {
+			pressed = GetKeyPressed();
+		}
+	}
+	
+	while(pressed != KeyHash) {
+		pressed = GetKeyPressed();
+	}
+}
 
 int main(void)
 {
-	int reset = 0;
+	Timer1Init();
+	SpeakerInit();
 	KeyboardInit();
+	DiodeInit();
 	LCD_Initalize();
+	
+	TimerStart();
 	LCD_Clear();
 	LCD_Home();
 	
-	while(1) {
-		char letter = GetKeyPressed();
-		char* message = malloc(sizeof(letter));
-		message[0] = letter;
-		if(letter != NullKey && reset == 0){
-			LCD_WriteText(message);
-			reset = 1;
-		}
-		else if(letter == NullKey && reset == 1) {
-			LCD_Clear();
-			reset = 0;
-		}
-	}
+	InitialBeep();
+	
+	const int codeSize = 7;
+	
+	char code[codeSize];
+	memset(code, KeyAsterisk, codeSize);
+	GetCode(code, codeSize);
+	
+	LCD_Clear();
+	WriteCode(code);
+	
+	while(1){}
 	
 	return 0;
 }
