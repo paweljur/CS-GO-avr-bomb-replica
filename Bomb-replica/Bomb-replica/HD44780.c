@@ -151,6 +151,15 @@ LCD_WriteCommand(HD44780_ENTRY_MODE | HD44780_EM_SHIFT_CURSOR | HD44780_EM_INCRE
 LCD_WriteCommand(HD44780_DISPLAY_ONOFF | HD44780_DISPLAY_ON | HD44780_CURSOR_OFF | HD44780_CURSOR_NOBLINK); // w³¹cz LCD, bez kursora i mrugania
 }
 
+// Moje funkcje
+
+void WriteCode(char code[7]) {
+	for(int i = 0; i < 7; i++) {
+		LCD_WriteData(code[i]);
+	}
+	LCD_Home();
+}
+
 //-------------------------------------------------------------------------------------------------
 //
 // Koniec pliku HD44780.c

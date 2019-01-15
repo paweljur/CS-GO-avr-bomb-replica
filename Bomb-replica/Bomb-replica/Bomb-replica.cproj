@@ -121,6 +121,12 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Disarming.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Disarming.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="HD44780.c">
       <SubType>compile</SubType>
     </Compile>
@@ -146,6 +152,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Timer1.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Util.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Util.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
