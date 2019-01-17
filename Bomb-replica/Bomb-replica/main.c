@@ -82,24 +82,28 @@ int main(void)
 	GetCode(code, codeSize);
 	
 	DisarmingInit(code);
+	StartCountdown();
 	
 	int isDisarmed = NotDisarmed;
 	while(isDisarmed == NotDisarmed){
 		isDisarmed = IsDisarmed();
-		
-		
-		DiodeOn();
+		if(IsCounting() == 0){
+			isDisarmed = Detonated;
+		}
 	}
 	
+	StopCountdown();
+	LCD_Clear();
 	if(isDisarmed == Disarmed) {
-		DiodeOff();
+		LCD_WriteText("Disarmed");
 	}
 	else {	
+		LCD_WriteText("KABOOM");
 		while (1) {
 			DiodeOff();
-			_delay_ms(500);
+			_delay_ms(50);
 			DiodeOn();
-			_delay_ms(500);
+			_delay_ms(50);
 		}
 	}
 	

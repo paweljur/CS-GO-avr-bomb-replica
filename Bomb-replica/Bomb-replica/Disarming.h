@@ -11,7 +11,6 @@
 #include <string.h>
 
 #include "Keyboard.h"
-#include "NotificationDiode.h"
 #include "HD44780.h"
 #include "Util.h"
 

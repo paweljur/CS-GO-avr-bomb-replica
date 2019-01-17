@@ -7,16 +7,49 @@
 #include "Timer1.h"
 
 volatile int timerStartedFlag = 0;
-volatile int interruptCounter = 0;
-volatile int signalTime = 0;
+volatile unsigned long interruptCounter = 0;
+volatile int countDownStartedFlag = 0;
+volatile unsigned long interruptsLeftToExplosion = InterruptsToExplode;
+volatile int signalOnFlag = 0;
+volatile int maxIntervalInterruptsCount = InterruptsPerInterval;
+volatile int intervalInterruptsLeft = InterruptsPerInterval;
+volatile int signalInterruptsLeft = InterruptsPerSignal;
+volatile int interruptsToShortenIntervalLeft = InterruptsToShortenInterval;
 
 ISR(TIMER1_OVF_vect){
-	if(timerStartedFlag == 1){
-		if(interruptCounter >= Timeframe){
-			signalTime++;
-			interruptCounter = 0;
-		}
+	if(timerStartedFlag == 1) {
 		interruptCounter++;
+		if (countDownStartedFlag == 1) {
+			interruptsLeftToExplosion--;
+			interruptsToShortenIntervalLeft--;
+			
+			if(interruptsToShortenIntervalLeft <= 0) {
+				maxIntervalInterruptsCount -= IntervalShortening;
+				interruptsToShortenIntervalLeft = InterruptsToShortenInterval;
+			}
+			
+			if(signalOnFlag == 1) {
+				signalInterruptsLeft--;
+				SignalOn();
+				if(signalInterruptsLeft <= 0) {
+					signalOnFlag = 0;
+					intervalInterruptsLeft = maxIntervalInterruptsCount;
+				}
+			}
+			else {
+				intervalInterruptsLeft--;
+				SignalOff();
+				if(intervalInterruptsLeft <= 0) {
+					signalOnFlag = 1;
+					signalInterruptsLeft = InterruptsPerSignal;
+				}
+			}
+			
+			if(interruptsLeftToExplosion <= 0) {
+				countDownStartedFlag = 0;
+				SignalOff();
+			}
+		}
 	}
 }
 
@@ -42,12 +75,25 @@ void TimerStart() {
 
 void TimerReset() {
 	interruptCounter = 0;
-	signalTime = 0;
 }
 
 void TimerStop() {	
 	timerStartedFlag = 0;
 }
+
+void StartCountdown() {
+	countDownStartedFlag = 1;
+}
+
+void StopCountdown() {
+	countDownStartedFlag = 0;
+	SignalOff();
+}
+
+int IsCounting() {
+	return countDownStartedFlag;
+}
+
 
 void SpeakerInit() {
 	//set timer to half
@@ -64,10 +110,20 @@ void SpeakerOff() {
 	TCCR1A &=~ (1<<COM1A1);
 }
 
-int GetSignalTimeInTimeframes() {
-	return signalTime;
+void SignalOn() {
+	SpeakerOn();
+	DiodeOn();
 }
 
-void ResetSignalTime() {
-	signalTime = 0;
+void SignalOff() {
+	SpeakerOff();
+	DiodeOff();
+}
+
+int GetInterruptsCount() {
+	return interruptCounter;
+}
+
+void StartCountDown() {
+	
 }

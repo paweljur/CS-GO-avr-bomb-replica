@@ -47,11 +47,9 @@ int IsDisarmed() {
 			else if(pressedKey == KeyHash) {
 				
 				if (Equal(actualCode, currentCode, DisarmCodeSize) == 0) {
-					LCD_WriteText("Detonated");
 					result = Detonated;
 				}
 				else {
-					LCD_WriteText("Disarmed");
 					result = Disarmed;
 				}
 			}
