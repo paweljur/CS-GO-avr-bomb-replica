@@ -33,6 +33,7 @@ int IsDisarmed() {
 	
 	if(pressedKey != NullKey && keyWasReleased == 1){
 		keyWasReleased = 0;
+		_delay_ms(50);
 		
 		if(firstKeyPress == 1){
 			firstKeyPress = 0;
@@ -57,6 +58,7 @@ int IsDisarmed() {
 		
 	} else if (pressedKey == NullKey) {
 		keyWasReleased = 1;
+		_delay_ms(50);
 	}
 	
 	return result;

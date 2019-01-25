@@ -9,6 +9,7 @@
 
 #include <avr/io.h>
 #include <string.h>
+#include <util/delay.h>
 
 #include "Keyboard.h"
 #include "HD44780.h"

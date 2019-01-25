@@ -10,7 +10,7 @@ volatile int timerStartedFlag = 0;
 volatile unsigned long interruptCounter = 0;
 volatile int countDownStartedFlag = 0;
 volatile unsigned long interruptsLeftToExplosion = InterruptsToExplode;
-volatile int signalOnFlag = 0;
+volatile int signalOnFlag = 1;
 volatile int maxIntervalInterruptsCount = InterruptsPerInterval;
 volatile int intervalInterruptsLeft = InterruptsPerInterval;
 volatile int signalInterruptsLeft = InterruptsPerSignal;
@@ -100,6 +100,7 @@ void SpeakerInit() {
 	OCR1A = 127;
 	//set pin
 	DDRB |= (1<<PB1);
+	
 }
 
 void SpeakerOn() {

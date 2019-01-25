@@ -16,6 +16,7 @@
 #include "NotificationDiode.h"
 #include "Disarming.h"
 #include "Util.h"
+#include "Vibrator.h"
 
 void InitialBeep() {
 	SpeakerOn();
@@ -40,6 +41,8 @@ void GetCode(char *code, const int size) {
 			pressed = GetKeyPressed();
 		}
 		
+		_delay_ms(50);
+		
 		AddDigit(code, pressed, size);
 		
 		WriteCode(code);
@@ -47,6 +50,8 @@ void GetCode(char *code, const int size) {
 		while(pressed != NullKey) {
 			pressed = GetKeyPressed();
 		}
+		
+		_delay_ms(50);
 	}
 	
 	while(pressed != KeyHash) {
@@ -94,17 +99,15 @@ int main(void)
 	
 	StopCountdown();
 	LCD_Clear();
-	if(isDisarmed == Disarmed) {
-		LCD_WriteText("Disarmed");
+	
+	if(isDisarmed == Detonated) {
+		VibratorInit();
+		VibratorOn();
+		_delay_ms(2000);
+		VibratorOff();
 	}
-	else {	
-		LCD_WriteText("KABOOM");
-		while (1) {
-			DiodeOff();
-			_delay_ms(50);
-			DiodeOn();
-			_delay_ms(50);
-		}
+	
+	while (1) {
 	}
 	
 	return 0;
