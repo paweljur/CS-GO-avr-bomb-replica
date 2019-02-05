@@ -7,31 +7,107 @@
 
 #include <avr/io.h>
 #include <stdlib.h>
-#include "NotificationDiode.h"
+#include <util/delay.h>
+#include <string.h>
+
 #include "Timer1.h"
 #include "Keyboard.h"
 #include "HD44780.h"
+#include "NotificationDiode.h"
+#include "Disarming.h"
+#include "Util.h"
+#include "Vibrator.h"
+
+void InitialBeep() {
+	SpeakerOn();
+	_delay_ms(100);
+	SpeakerOff();
+	_delay_ms(75);
+	SpeakerOn();
+	_delay_ms(100);
+	SpeakerOff();
+}
+
+
+
+void GetCode(char *code, const int size) {
+	char pressed = NullKey;
+	
+	WriteCode(code);
+	
+	for(int i = 0; i < size; i++) {
+
+		while(pressed == NullKey || pressed == KeyAsterisk || pressed == KeyHash) {
+			pressed = GetKeyPressed();
+		}
+		
+		_delay_ms(50);
+		
+		AddDigit(code, pressed, size);
+		
+		WriteCode(code);
+		
+		while(pressed != NullKey) {
+			pressed = GetKeyPressed();
+		}
+		
+		_delay_ms(50);
+	}
+	
+	while(pressed != KeyHash) {
+		pressed = GetKeyPressed();
+	}
+	
+	while(pressed != NullKey) {
+		pressed = GetKeyPressed();
+	}
+	
+	LCD_Clear();
+	LCD_Home();
+}
 
 int main(void)
 {
-	int reset = 0;
+	Timer1Init();
+	SpeakerInit();
 	KeyboardInit();
+	DiodeInit();
 	LCD_Initalize();
+	
+	TimerStart();
 	LCD_Clear();
 	LCD_Home();
 	
-	while(1) {
-		char letter = GetKeyPressed();
-		char* message = malloc(sizeof(letter));
-		message[0] = letter;
-		if(letter != NullKey && reset == 0){
-			LCD_WriteText(message);
-			reset = 1;
+	InitialBeep();
+	
+	const int codeSize = 7;
+	
+	char code[codeSize];
+	memset(code, KeyAsterisk, codeSize);
+	GetCode(code, codeSize);
+	
+	DisarmingInit(code);
+	StartCountdown();
+	
+	int isDisarmed = NotDisarmed;
+	while(isDisarmed == NotDisarmed){
+		isDisarmed = IsDisarmed();
+		if(IsCounting() == 0){
+			isDisarmed = Detonated;
 		}
-		else if(letter == NullKey && reset == 1) {
-			LCD_Clear();
-			reset = 0;
-		}
+	}
+	
+	StopCountdown();
+	LCD_Clear();
+	
+	if(isDisarmed == Detonated) {
+		VibratorInit();
+		VibratorOn();
+		_delay_ms(2000);
+		VibratorOff();
+	}
+	
+	while (1) {
 	}
 	
 	return 0;

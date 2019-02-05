@@ -11,20 +11,33 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <stdio.h>
+#include "NotificationDiode.h"
+#include "HD44780.h"
 
-#define Timeframe 9		//unit of time, equals to x interrupts
-#define TimeframesPerSecond 400		//one timeframe equals to 0,0025s
+#define InterruptsPerSecond 3600L
+#define InterruptsToExplode 50 * InterruptsPerSecond
+#define InterruptsToShortenInterval 125
+#define IntervalShortening 2
+#define InterruptsPerSignal 0.2 * InterruptsPerSecond
+#define InterruptsPerInterval 0.8 * InterruptsPerSecond
 
 void Timer1Init();
 void TimerStart();
 void TimerReset();
 void TimerStop();
 
+void StartCountdown();
+void StopCountdown();
+int IsCounting();
+
 void SpeakerInit();
 void SpeakerOn();
 void SpeakerOff();
+void SignalOn();
+void SignalOff();
 
-int GetSignalTimeInTimeframes();
+int GetInterruptsCount();
 void ResetSignalTime();
 
 #endif /* TIMER1_H_ */
